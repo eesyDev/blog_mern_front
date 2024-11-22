@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '../redux/services/authApi';
+import { login } from '../redux/slices/authSlice';
 
 const Login = () => {
   const [loginUser, { data, error }] = useLoginMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { register, handleSubmit, setError, formState: { errors, isValid } } = useForm();
 
@@ -18,7 +21,12 @@ const Login = () => {
     const userData = {email, password}
 
     const response = await loginUser(userData);
-
+    dispatch(login({data: response?.data, isLoggedIn: true}))
+    if (response?.data?.token !== undefined) {
+      localStorage.setItem('token', response?.data?.token)
+    } else {
+      alert('Auth failed')
+    }
     console.log(response)
     navigate('/')
   }
