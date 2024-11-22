@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
+import { login } from '../redux/slices/authSlice';
 import { useRegisterMutation } from '../redux/services/authApi';
 
 const Register = () => {
-  const [fullName, setFullName] = useState('');
   const [regUser, { data, error }] = useRegisterMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   
-  const { register, handleSubmit, setError, formState: { errors, isValid } } = useForm({
-    // fullName: values.fullName
-  });
+  const { register, handleSubmit, setError, formState: { errors, isValid } } = useForm({mode: 'onChange'});
 
   const onSubmit = async (values) => {
     let fullName = values.fullName;
@@ -19,8 +22,14 @@ const Register = () => {
     const userData = {fullName, email, password}
 
     const response = await regUser(userData);
+    dispatch(login({data: response?.data, isLoggedIn: true}))
+    if (response?.data?.token !== undefined) {
+      localStorage.setItem('token', response?.data?.token)
+    } else {
+      alert('Auth failed')
+    }
 
-    console.log(response)
+    navigate('/')
   }
 
   return (
@@ -31,19 +40,25 @@ const Register = () => {
           label="Full Name"
           fullWidth
           className='field'
+          helperText={errors.fullName?.message}
+          error={Boolean(errors.fullName?.message)}
           { ...register('fullName', { required: 'Put valid name' }) }
         />
         <TextField
           label="Email"
           fullWidth
           className='field'
-          { ...register('Email', { required: 'Put valid email' }) }
+          error={Boolean(errors.email?.message)}
+          helperText={errors.email?.message}
+          { ...register('email', { required: 'Put valid email' }) }
         />
         <TextField
           label="Password"
           fullWidth
           className='field'
-          { ...register('Password', { required: 'Put valid password' }) }
+          helperText={errors.password?.message}
+          error={Boolean(errors.password?.message)}
+          { ...register('password', { required: 'Put valid password' }) }
         />
         <div className="register-submit">
           <button className="btn btn--primary">Sign Up</button>

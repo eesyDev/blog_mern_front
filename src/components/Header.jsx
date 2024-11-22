@@ -1,23 +1,28 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import authSlice from '../redux/slices/authSlice';
 
 const Header = () => {
-	const [isAuth, setIsAuth] = useState(false)
+
+	const isAuth = useSelector((state) => state.authSlice.isLoggedIn);
+
+	console.log(isAuth)
 	return (
 		<header className='header'>
 			<div className="container">
 				<div className="header-wrapper wrapper">
-					<div className="header-logo">MySuperBlog</div>
+					<Link to="/" className="header-logo">MySuperBlog</Link>
 					<div className="header-btns">
 						{
 							isAuth ? 
 							<>
-								<Link>Create Post</Link>
-								<Link>Log out</Link>
+								<Link className='btn btn-outlined'>Create Post</Link>
+								<Link className='btn btn-error'>Log out</Link>
 							</> : 
 							<>
-								<Link>Create Account</Link>
-								<Link>Log in</Link>
+								<Link className='btn btn-outlined'>Create Account</Link>
+								<Link className='btn btn-solid'>Log in</Link>
 							</>
 						}
 					</div>

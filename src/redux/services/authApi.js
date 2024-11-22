@@ -17,8 +17,11 @@ export const authApi = createApi({
     endpoints: (builder) => ({
         register: builder.mutation({
             query: (user) => createRequest('/profile/registration', 'POST', user)
-        })
+        }),
+        login: builder.mutation({
+            query: (user) => createRequest('/profile/login', 'POST', user)
+        }),
     })
 });
 
-export const { useRegisterMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation } = authApi;
