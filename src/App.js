@@ -14,12 +14,13 @@ function App() {
 	const userTokenInStorage = localStorage.getItem('token');
 	const dispatch = useDispatch();
 
-	console.log(userTokenInStorage)
 	useEffect(() => {
 		if (userTokenInStorage) {
 			dispatch(getProfile({ isLoggedIn: true }))
 		}
-	}, [])
+	}, []);
+
+	
 	return (
 		<div className="app">
 			<Routes>
