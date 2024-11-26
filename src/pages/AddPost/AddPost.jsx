@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { TextField, Button } from '@mui/material';
 import SimpleMde from 'react-simplemde-editor';
 import styles from './AddPost.module.scss';
@@ -10,9 +10,15 @@ const AddPost = () => {
   const [ image, setImage ] = useState('');
   const [ tags, setTags ] = useState([]);
   const [ text, setText ] = useState('');
+  const [isEditing, setIsEditing] = useState(false)
   const [imageUrl, setImageUrl ] = useState('');
+  const [uploadPost] = useCreatePostMutation();
 
-const createPost = () => {
+  const onSubmitText = useCallback((value) => {
+    setText(value)
+  }, [])
+
+const createPost = async () => {
   // const formData = new FormData();
 
   try {
@@ -23,8 +29,15 @@ const createPost = () => {
       image
     }
 
-  } catch(err) {
+    if (isEditing) {
+      console.log('editing')
+    } else {
+      const response = await uploadPost(fields);
 
+      console.log(response)
+    }
+  } catch(err) {
+    console.log(err)
   }
 }
   return (
@@ -57,10 +70,10 @@ const createPost = () => {
         <SimpleMde 
           value={text || ''} 
           className={styles.editor}
-          onChange={(e) => setText(e.target.value)}
+          onChange={onSubmitText}
           />
         <div classes={styles.buttons}>
-          <Button size="large" variant='contained'>Add Post</Button>
+          <Button size="large" variant='contained' onClick={createPost}>Add Post</Button>
           <Button size="large" variant='outlined'>Cancel</Button>
         </div>
       </div>

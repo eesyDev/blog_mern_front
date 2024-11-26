@@ -7,6 +7,11 @@ const createRequest = (url, method, data) => ({
 const baseQuery = fetchBaseQuery({
     baseUrl: 'http://localhost:4444',
     prepareHeaders: (headers) => {
+        const token = localStorage.getItem('token');
+        console.log(token)
+        if (token) {
+            headers.set('Authorization', token)
+        }
         return headers
     }
 })
