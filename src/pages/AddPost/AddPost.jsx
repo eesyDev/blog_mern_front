@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { TextField, Button } from '@mui/material';
 import SimpleMde from 'react-simplemde-editor';
 import styles from './AddPost.module.scss';
 import Header from '../../components/Header';
-import { useCreatePostMutation } from '../../redux/services/postApi';
+import { useCreatePostMutation, useUploadImageMutation } from '../../redux/services/postApi';
+import Tags from '../../components/Tags';
 
 const AddPost = () => {
   const [ title, setTitle ] = useState('');
@@ -13,10 +14,29 @@ const AddPost = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [imageUrl, setImageUrl ] = useState('');
   const [uploadPost] = useCreatePostMutation();
+  const [uploadImage] = useUploadImageMutation();
+
+  const inputRef = useRef(null)
 
   const onSubmitText = useCallback((value) => {
     setText(value)
-  }, [])
+  }, []);
+
+const handleUploadImage = async (event) => {
+  const file = event.target.files[0];
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const { data } = await uploadImage(formData);
+
+  setImageUrl(data.url)
+  console.log(data)
+}
+
+const removeImage = () => {
+  setImageUrl('')
+}
 
 const createPost = async () => {
   // const formData = new FormData();
@@ -47,26 +67,27 @@ const createPost = async () => {
       <div className="container">
       <h1>Creating Post</h1>
         <div className="image">
-          <Button>Load preview</Button>
-          <input hidden type="file" />
+          <Button onClick={() => inputRef.current.click()}>Load preview</Button>
+          <input ref={inputRef} hidden type="file" onChange={handleUploadImage} />
           { imageUrl && (
-            <>
-              <Button variant='contained' color='error'>Delete</Button>
-              <img src="" alt=""  />
-            </>
+            <div className='image-inner'>
+              <img src={`http://localhost:4444${imageUrl}`} alt=""  />
+              <Button variant='contained' color='error' onClick={removeImage}>Delete</Button>
+            </div>
           )}
         </div>
         <br /><br />
         <TextField value={title || ''} placeholder='Post title' variant='standard' fullWidth classes={{root: styles.title}}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <TextField 
+        {/* <TextField 
           value={tags || []} 
           placeholder='Tags' 
           variant='standard' 
           classes={{root: styles.tags}}
           onChange={(e) => setTags(e.target.value)}
-          />
+          /> */}
+        <Tags/>
         <SimpleMde 
           value={text || ''} 
           className={styles.editor}

@@ -273,3 +273,25 @@ a {
         width: 100%;
     }
 }
+
+.post-editor {
+    > .container{
+        background-color: #fff;
+        margin-top: 30px;
+        padding: 30px;
+        border-radius: 10px;
+    }
+    .image img {
+        width: 150px;
+        height: 150px;
+        border-radius: 10px
+    }
+    .image-inner {
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+    }
+    button {
+        max-width: 150px;
+    }
+} 

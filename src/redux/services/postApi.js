@@ -22,8 +22,22 @@ export const postApi = createApi({
     endpoints: (builder) => ({
         createPost: builder.mutation({
             query: (data) => createRequest('/post/create', 'POST', data)
+        }),
+        uploadImage: builder.mutation({
+            query: (image) => createRequest('/upload', 'POST', image)
+        }),
+        createTag: builder.mutation({
+            query: (data) => createRequest('/tag/create', 'POST', data)
+        }),
+        getTags: builder.query({
+            query: () => createRequest('/tag/all', 'GET')
         })
     })
 })
 
-export const { useCreatePostMutation } = postApi
+export const { 
+    useCreatePostMutation, 
+    useUploadImageMutation, 
+    useCreateTagMutation,
+    useGetTagsQuery 
+} = postApi
