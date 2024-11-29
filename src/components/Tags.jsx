@@ -32,13 +32,9 @@ const Tags = () => {
     const suggestion = data?.map(tag => ({id: String(tag._id), text: tag.title}));
 
     const handleDelete = async (index) => {
-        // const trimmedTag = tag.text.trim();
-
         const tagToDelete = tags[index];
         dispatch(removeTag(tagToDelete._id))
     }
-
-    console.log(data)
   return (
     <div>
         <ReactTags

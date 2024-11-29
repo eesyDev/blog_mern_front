@@ -1,6 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { TextField, Button } from '@mui/material';
+import { toast } from 'react-hot-toast';
 import SimpleMde from 'react-simplemde-editor';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styles from './AddPost.module.scss';
 import Header from '../../components/Header';
 import { useCreatePostMutation, useUploadImageMutation } from '../../redux/services/postApi';
@@ -9,12 +12,13 @@ import Tags from '../../components/Tags';
 const AddPost = () => {
   const [ title, setTitle ] = useState('');
   const [ image, setImage ] = useState('');
-  const [ tags, setTags ] = useState([]);
+  const tags = useSelector((state) => state.tagSlice.selectedTags);
   const [ text, setText ] = useState('');
   const [isEditing, setIsEditing] = useState(false)
   const [imageUrl, setImageUrl ] = useState('');
   const [uploadPost] = useCreatePostMutation();
   const [uploadImage] = useUploadImageMutation();
+  const navigate = useNavigate();
 
   const inputRef = useRef(null)
 
@@ -31,7 +35,6 @@ const handleUploadImage = async (event) => {
   const { data } = await uploadImage(formData);
 
   setImageUrl(data.url)
-  console.log(data)
 }
 
 const removeImage = () => {
@@ -39,22 +42,26 @@ const removeImage = () => {
 }
 
 const createPost = async () => {
-  // const formData = new FormData();
 
   try {
     const fields = {
       title,
       text,
-      tags,
-      image
+      tags: tags.map(tag => tag.id),
+      imageUrl
     }
 
     if (isEditing) {
       console.log('editing')
     } else {
       const response = await uploadPost(fields);
-
+      toast.success(`${response?.data?.post?.title} added`);
       console.log(response)
+      const timer = setTimeout(() => {
+        navigate('/');
+      }, 2000);
+
+      return () => clearTimeout(timer);
     }
   } catch(err) {
     console.log(err)
@@ -69,7 +76,7 @@ const createPost = async () => {
         <div className="image">
           <Button onClick={() => inputRef.current.click()}>Load preview</Button>
           <input ref={inputRef} hidden type="file" onChange={handleUploadImage} />
-          { imageUrl && (
+          { imageUrl && imageUrl !== undefined && (
             <div className='image-inner'>
               <img src={`http://localhost:4444${imageUrl}`} alt=""  />
               <Button variant='contained' color='error' onClick={removeImage}>Delete</Button>
@@ -80,14 +87,7 @@ const createPost = async () => {
         <TextField value={title || ''} placeholder='Post title' variant='standard' fullWidth classes={{root: styles.title}}
           onChange={(e) => setTitle(e.target.value)}
         />
-        {/* <TextField 
-          value={tags || []} 
-          placeholder='Tags' 
-          variant='standard' 
-          classes={{root: styles.tags}}
-          onChange={(e) => setTags(e.target.value)}
-          /> */}
-        <Tags/>
+        <Tags />
         <SimpleMde 
           value={text || ''} 
           className={styles.editor}

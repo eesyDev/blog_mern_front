@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { useGetAllPostsQuery, useGetTagsQuery } from '../redux/services/postApi';
 import Post from '../components/Post/Post';
+import noAvatar from '../assets/noavatarimg.png'
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -22,9 +23,10 @@ const Home = () => {
 
   useEffect(() => {
     setTags(tagsList)
-  }, [tagsQuery.data])
+  }, [tagsQuery.data]);
 
-  console.log(tags, posts)
+  console.log(posts)
+
   return (
     <div className='page'>
       <Header/>
@@ -40,7 +42,18 @@ const Home = () => {
                 (isPostFetching ? [...Array(5)] : posts).map((post, index) => (
                   isPostFetching ? 
                   <Post isLoading={true} key={index}/> : 
-                  <Post isLoading={false} key={index} {...post}/>
+                  <Post isLoading={false} key={index} 
+                      id={post?._id}
+                      title={post?.title}
+                      image={post?.imageUrl ? `http://localhost:4444${post?.imageUrl}` : noAvatar}
+                      userName={post?.user?.fullName}
+                      userImg={post?.user?.image}
+                      createdAt={post?.createdAt}
+                      viewsCount={post?.viewsCount}
+                      commentsCount={post?.commentsCount}
+                      tags={post?.tags}
+
+                  />
                 ))
               }
             </div>

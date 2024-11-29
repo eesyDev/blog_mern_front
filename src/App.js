@@ -9,6 +9,7 @@ import AddPost from './pages/AddPost/AddPost';
 import Profile from './pages/Profile';
 import Header from './components/Header';
 import { getProfile } from './redux/slices/authSlice';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
 	const userTokenInStorage = localStorage.getItem('token');
@@ -20,9 +21,9 @@ function App() {
 		}
 	}, []);
 
-	
 	return (
 		<div className="app">
+			<Toaster/>
 			<Routes>
 				<Route path="/" element={<Home/>}/>
 				<Route path="/autorization"  element={<Authorization/>} />
