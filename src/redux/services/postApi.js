@@ -31,6 +31,9 @@ export const postApi = createApi({
         }),
         getTags: builder.query({
             query: () => createRequest('/tag/all', 'GET')
+        }),
+        getAllPosts: builder.query({
+            query: () => createRequest('/post/all', 'GET') 
         })
     })
 })
@@ -39,5 +42,6 @@ export const {
     useCreatePostMutation, 
     useUploadImageMutation, 
     useCreateTagMutation,
-    useGetTagsQuery 
+    useGetTagsQuery,
+    useGetAllPostsQuery 
 } = postApi
